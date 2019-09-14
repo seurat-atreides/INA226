@@ -1,11 +1,13 @@
-/***************************************************************************************************************//*!
-* @file INA226.cpp
-* 
-* @section INA226cpp_intro_section Description
-*
-* Arduino Library for accessing the INA2xx Family of power measurement devices\n\n
-* See main library header file "INA.h" for details and license information
-*******************************************************************************************************************/
+/**
+ * @file INA226.cpp
+ * @author Seurat Atreides (https://github.com/seurat-atreides)
+ * @brief Class 
+ * @version 0.1
+ * @date 2019-09-15
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 
 #if ARDUINO >= 100
 #include "Arduino.h"
@@ -17,27 +19,50 @@
 
 #include "INA226.h"
 
-bool INA226::begin(uint8_t address)
-{
+/**
+ * @brief               Initializes the I2C connection and sets the device address for later use
+ * 
+ * @param [in] address  Specifies the INA226 device address    
+ */
+void INA226::begin(uint8_t address) {
     Wire.begin();
     inaAddress = address;
-    return true;
-}
+} // of method begin
 
-bool INA226::configure(ina226_averages_t avg, ina226_busConvTime_t busConvTime, ina226_shuntConvTime_t shuntConvTime, ina226_mode_t mode)
-{
+/**
+ * @brief 
+ * 
+ * @param i2cSpeed 
+ */
+void INA226::setI2CSpeed(const uint32_t i2cSpeed ) {
+  Wire.setClock(i2cSpeed);
+} // of method setI2CSpeed
+
+/**
+ * @brief 
+ * 
+ * @param avg 
+ * @param busConvTime 
+ * @param shuntConvTime 
+ * @param mode 
+ * @return true  
+ */
+void INA226::configure(ina226_averages_t avg, ina226_busConvTime_t busConvTime, ina226_shuntConvTime_t shuntConvTime, ina226_mode_t mode) {
     uint16_t config = 0;
-
     config |= (avg << 9 | busConvTime << 6 | shuntConvTime << 3 | mode);
-
     vBusMax = 36;
     vShuntMax = 0.08192f;
-
     writeRegister16(INA226_REG_CONFIG, config);
+} // of method configure
 
-    return true;
-}
-
+/**
+ * @brief 
+ * 
+ * @param calibrationValue 
+ * @param rShuntValue 
+ * @return true 
+ * @return false 
+ */
 bool INA226::calibrate(uint16_t calibrationValue, float rShuntValue)
 {
     //uint16_t calibrationValue;
@@ -62,6 +87,24 @@ bool INA226::calibrate(uint16_t calibrationValue, float rShuntValue)
 
     return true;
 }
+
+
+/***************************************************************************************************************//*!
+* @brief     will not return until the conversion for the specified device is finished
+* @details   if no device number is specified it will wait until all devices have finished their current conversion. 
+*            If the conversion has completed already then the flag (and interrupt pin, if activated) is also reset.
+* @param[in] deviceNumber to reset (Optional, when not set then all devices have their mode changed)
+*******************************************************************************************************************/
+void INA226::waitForConversion(const uint8_t deviceNumber)
+{
+  uint16_t cvBits = 0;
+
+  cvBits = 0;
+  // Loop until the conversion is ready
+  while(cvBits==0) {
+    cvBits = readWord(INA226_REG_MASKENABLE,deviceNumber) & INA226_BIT_CVRF;
+  } // of while the conversion not ready
+} // of method waitForConversion
 
 float INA226::getMaxPossibleCurrent(void)
 {
@@ -186,6 +229,10 @@ void INA226::enableShuntOverLimitAlert(void)
     writeRegister16(INA226_REG_MASKENABLE, INA226_BIT_SOL);
 }
 
+/**
+ * @brief 
+ * 
+ */
 void INA226::enableShuntUnderLimitAlert(void)
 {
     writeRegister16(INA226_REG_MASKENABLE, INA226_BIT_SUL);

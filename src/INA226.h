@@ -124,7 +124,8 @@ class INA226
 {
     public:
 
-	bool begin(uint8_t address = INA226_ADDRESS);
+	void begin(uint8_t address = INA226_ADDRESS);
+	void INA226::setI2CSpeed(const uint32_t i2cSpeed );
 	bool configure(ina226_averages_t avg = INA226_AVERAGES_1, ina226_busConvTime_t busConvTime = INA226_BUS_CONV_TIME_1100US, ina226_shuntConvTime_t shuntConvTime = INA226_SHUNT_CONV_TIME_1100US, ina226_mode_t mode = INA226_MODE_SHUNT_BUS_CONT);
 	bool calibrate(uint16_t calibrationValue = 1837, float rShuntValue = 0.1);
 
