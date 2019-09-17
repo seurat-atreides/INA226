@@ -23,4 +23,3 @@ If you want to support the further and long-term development of libraries, pleas
 You can do this by transferring any amount to my PayPal account: paypal@jarzebski.pl
 
 Thanks!
->>>>>>> 968a684ed44d0e076a90c93feed07e834b5fdad4
