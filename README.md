@@ -2,7 +2,7 @@ INA226
 ==============
 
 INA226 Bi-directional Current/Power Monitor Arduino Library
-<<<<<<< HEAD
+
 =======
 
 Tutorials: http://www.jarzebski.pl/arduino/czujniki-i-sensory/cyfrowy-czujnik-pradu-mocy-ina226.html
