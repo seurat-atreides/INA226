@@ -60,15 +60,15 @@ bool INA226::calibrate(float rShuntValue, float iMaxExpected)
 
     minimumLSB = iMaxExpected / 32768;
 
-    currentLSB = (uint16_t)(minimumLSB * 100000000);
+/*     currentLSB = (uint16_t)(minimumLSB * 100000000);
     currentLSB /= 100000000;
     currentLSB /= 0.0001;
     currentLSB = ceil(currentLSB);
-    currentLSB *= 0.0001;
+    currentLSB *= 0.0001; */
 
-    powerLSB = currentLSB * 25;
+    powerLSB = minimumLSB * 25;
 
-    calibrationValue = (uint16_t)((0.00512) / (currentLSB * rShunt));
+    calibrationValue = (uint16_t)((0.00512) / (minimumLSB * rShunt));
 
     writeRegister16(INA226_REG_CALIBRATION, calibrationValue);
 
@@ -82,7 +82,7 @@ float INA226::getMaxPossibleCurrent(void)
 
 float INA226::getMaxCurrent(void)
 {
-    float maxCurrent = (currentLSB * 32767);
+    float maxCurrent = (currentLSB * 32768);
     float maxPossible = getMaxPossibleCurrent();
 
     if (maxCurrent > maxPossible)
